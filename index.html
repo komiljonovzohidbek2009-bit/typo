@@ -1,420 +1,618 @@
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#111318">
-<meta name="description" content="TYPO — Improve your typing speed, accuracy and productivity.">
-<title>TYPO — Typing Speed Test</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f4f5fb">
+<meta name="description" content="TYPO — a beautifully designed typing speed and accuracy trainer with easy and difficult modes.">
+<title>TYPO — Type with purpose</title>
 <style>
-:root {
-  --bg:#111318;
-  --panel:#191c24;
-  --panel2:#20242e;
-  --text:#e5e7eb;
-  --muted:#777f90;
-  --accent:#a78bfa;
-  --correct:#a78bfa;
-  --error:#ef6464;
-  --border:#292e3a;
+:root{
+  color-scheme:light;
+  --bg:#f4f5fb;--surface:rgba(255,255,255,.76);--surface-solid:#fff;
+  --surface-2:#eef0f8;--text:#202235;--muted:#81869d;
+  --accent:#7656e8;--accent-soft:rgba(118,86,232,.12);
+  --good:#7656e8;--bad:#e34f68;--border:rgba(93,101,139,.14);
+  --shadow:0 18px 55px rgba(41,45,82,.08);--line:1.85;
 }
-body.light {
-  --bg:#f5f6fa;
-  --panel:#ffffff;
-  --panel2:#edf0f6;
-  --text:#202433;
-  --muted:#81899b;
-  --accent:#7654d9;
-  --correct:#7654d9;
-  --error:#dc4545;
-  --border:#e3e6ee;
+body.dark{
+  color-scheme:dark;
+  --bg:#101117;--surface:rgba(29,31,43,.78);--surface-solid:#1d1f2b;
+  --surface-2:#272a39;--text:#f0eff8;--muted:#9295aa;
+  --accent:#ad96ff;--accent-soft:rgba(173,150,255,.15);
+  --good:#c2b0ff;--bad:#ff7189;--border:rgba(190,185,230,.13);
+  --shadow:0 20px 65px rgba(0,0,0,.24);
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body {
-  background:var(--bg);
-  color:var(--text);
-  font-family:Inter,system-ui,-apple-system,sans-serif;
-  min-height:100vh;
-  transition:.25s;
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;min-height:100vh;background:
+  radial-gradient(ellipse at 15% 0%,rgba(145,119,255,.10),transparent 36%),
+  radial-gradient(ellipse at 90% 15%,rgba(112,170,255,.09),transparent 32%),var(--bg);
+  color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  transition:background .25s,color .25s;
 }
-button{font:inherit;cursor:pointer}
+button{font:inherit}
 button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-.container{max-width:1100px;margin:auto;padding:30px 24px}
-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:95px}
-.logo{font-size:30px;font-weight:900;letter-spacing:-2px;color:var(--text)}
-.logo span{color:var(--accent)}
-nav{display:flex;gap:26px}
-nav button,.icon-btn{
-  background:none;border:0;color:var(--muted);font-size:14px;
-  transition:.2s;
+.shell{width:min(1120px,calc(100% - 44px));margin:0 auto}
+.topbar{height:66px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-size:30px;font-weight:950;letter-spacing:-2px;color:var(--text);text-decoration:none}
+.brand span{color:var(--accent)}
+.nav{display:flex;gap:8px;padding:5px;border:1px solid var(--border);background:var(--surface);backdrop-filter:blur(18px);border-radius:999px}
+.nav button,.round-btn,.mode-btn,.option-btn,.action-btn{
+  border:0;cursor:pointer;transition:background .18s,color .18s,transform .18s,border-color .18s;
 }
-nav button:hover,nav button.active{color:var(--accent)}
-.header-right{display:flex;gap:12px}
-.icon-btn{font-size:19px;padding:8px}
-main{max-width:850px;margin:auto}
-.hero{text-align:center;margin-bottom:55px}
-.eyebrow{color:var(--accent);font-size:12px;letter-spacing:3px;font-weight:800}
-h1{font-size:clamp(42px,7vw,68px);letter-spacing:-4px;margin:14px 0}
-.subtitle{color:var(--muted);font-size:15px}
-.section-label{color:var(--muted);font-size:11px;letter-spacing:2px;font-weight:800;margin-bottom:13px}
-.controls{background:var(--panel);border:1px solid var(--border);border-radius:15px;padding:20px;margin-bottom:35px}
-.control-row{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap}
-.control-group{display:flex;gap:6px;flex-wrap:wrap}
-.control-btn{
-  padding:9px 14px;border:1px solid transparent;border-radius:8px;
-  color:var(--muted);background:transparent;font-size:13px;
-}
-.control-btn.active{background:var(--panel2);color:var(--accent);border-color:var(--border)}
-.separator{height:1px;background:var(--border);margin:17px 0}
-.test-area{position:relative;margin-bottom:30px}
-.stats{display:flex;gap:35px;margin-bottom:20px;flex-wrap:wrap}
-.stat small{display:block;color:var(--muted);font-size:11px;letter-spacing:1px}
-.stat strong{display:block;font-size:27px;color:var(--accent);margin-top:3px;font-weight:600}
-.timer strong{font-size:35px}
-.typing-box{
-  background:var(--panel);border:1px solid var(--border);
-  border-radius:15px;padding:35px;min-height:205px;
-  position:relative;cursor:text;
-}
-#words{
-  font-size:23px;line-height:1.9;letter-spacing:.4px;
-  color:var(--muted);word-break:break-word;
-  user-select:none;
-}
-.char.correct{color:var(--correct)}
-.char.incorrect{color:var(--error);background:#ef646420;border-radius:3px}
-.char.current{position:relative}
-.char.current:before{
-  content:"";position:absolute;left:-2px;top:4px;height:26px;
-  width:2px;background:var(--accent);animation:blink 1s infinite;
-}
-@keyframes blink{50%{opacity:0}}
-#input{
-  position:absolute;opacity:0;width:1px;height:1px;
-  pointer-events:none;
-}
-.hint{text-align:center;color:var(--muted);font-size:12px;margin-top:17px}
-.hint kbd{background:var(--panel2);padding:4px 8px;border-radius:5px}
-.actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
-.action-btn{
-  border:1px solid var(--border);background:var(--panel);
-  color:var(--text);padding:12px 20px;border-radius:9px;font-size:13px;
-}
-.action-btn.primary{background:var(--accent);color:#171321;border-color:var(--accent);font-weight:800}
-.action-btn:hover{transform:translateY(-2px)}
-.result{
-  display:none;background:var(--panel);border:1px solid var(--border);
-  border-radius:15px;padding:28px;margin-top:30px;
-}
-.result h2{font-size:25px;margin-bottom:22px}
-.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
-.result-item{background:var(--panel2);padding:18px;border-radius:10px}
-.result-item small{color:var(--muted);font-size:11px}
-.result-item strong{display:block;font-size:29px;color:var(--accent);margin-top:8px}
-footer{margin-top:100px;text-align:center;color:var(--muted);font-size:12px;padding-bottom:25px}
+.nav button{background:transparent;color:var(--muted);padding:10px 19px;border-radius:999px;font-size:13px}
+.nav button.active{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.nav button:hover,.round-btn:hover,.mode-btn:hover,.option-btn:hover,.action-btn:hover{transform:translateY(-1px)}
+.round-btn{width:42px;height:42px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text);backdrop-filter:blur(18px);font-size:18px}
+main{padding:22px 0 64px}
+.hero{text-align:center;margin-bottom:24px}
+.eyebrow{font-size:11px;letter-spacing:3px;font-weight:850;color:var(--accent)}
+h1{font-size:clamp(34px,5vw,52px);letter-spacing:-3px;line-height:1.04;margin:9px 0 8px;font-weight:850}
+h1 em{font-style:normal;color:var(--accent)}
+.subtitle{margin:0;color:var(--muted);font-size:14px}
+.hero-note{margin:8px 0 0;color:var(--muted);font-size:11px;letter-spacing:.1px}
+.glass{background:var(--surface);border:1px solid var(--border);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:var(--shadow)}
+.settings{padding:14px 18px;border-radius:20px;margin:0 auto 20px;max-width:1000px}
+.settings-top{display:grid;grid-template-columns:1fr 1fr auto;align-items:center;gap:18px}
+.label{font-size:10px;font-weight:850;letter-spacing:2px;color:var(--muted);margin-bottom:10px}
+.mode-group,.options{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.mode-btn,.option-btn{background:transparent;color:var(--muted);padding:10px 15px;border-radius:999px;font-size:13px}
+.mode-btn.active,.option-btn.active{background:var(--accent-soft);color:var(--accent);font-weight:750}
+.settings-divider{display:none}
+.test-wrap{max-width:1000px;margin:auto}
+.stats{display:flex;gap:30px;align-items:flex-end;margin:0 0 10px;padding:0 3px;min-height:42px}
+.stat small{display:block;color:var(--muted);font-size:10px;letter-spacing:1.5px;font-weight:800}
+.stat strong{display:block;font-size:23px;line-height:1.2;margin-top:5px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums}
+.stat.timer strong{font-size:27px;color:var(--accent)}
+.stat.live-hidden{visibility:hidden}
+.typing-card{position:relative;padding:20px 25px 18px;border-radius:22px;overflow:hidden;cursor:text;isolation:isolate}
+.typing-card:focus-within{border-color:rgba(118,86,232,.38)}
+.text-window{height:calc(3 * 1.9em);overflow:hidden;position:relative;scrollbar-width:none;mask-image:linear-gradient(to bottom,transparent 0%,#000 7%,#000 93%,transparent 100%)}
+.text-window::-webkit-scrollbar{display:none}
+#textContent{font-size:clamp(19px,2.25vw,24px);line-height:1.9;letter-spacing:.12px;word-break:normal;overflow-wrap:anywhere;white-space:pre-wrap;color:var(--muted);font-weight:450;transition:transform .08s linear}
+.char{position:relative;border-radius:3px;transition:color .09s ease,background-color .09s ease}
+.char.correct{color:var(--good)}
+.char.incorrect{color:var(--bad);background:rgba(227,79,104,.15);text-decoration:underline;text-decoration-color:var(--bad);text-decoration-thickness:1px}
+.char.current{color:var(--text);background:var(--accent-soft);border-radius:4px}
+.char.current:after{content:"";position:absolute;left:-2px;top:2px;bottom:1px;width:2px;border-radius:3px;background:var(--accent);box-shadow:0 0 9px var(--accent);animation:caretPulse 1s ease-in-out infinite}
+@keyframes caretPulse{50%{opacity:.42}}
+.typing-card:after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;box-shadow:inset 0 1px rgba(255,255,255,.18)}
+#typingInput{position:fixed;left:-10000px;top:0;width:1px;height:1px;opacity:0;pointer-events:none}
+.below{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:10px 4px 0}
+.hint{font-size:11px;color:var(--muted)}
+kbd{font:inherit;font-size:10px;padding:4px 7px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--muted)}
+.actions{display:flex;justify-content:center;gap:10px;margin-top:15px;flex-wrap:wrap}
+.action-btn{padding:11px 19px;border-radius:999px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-size:12px;font-weight:650;backdrop-filter:blur(12px)}
+.action-btn.primary{background:var(--accent);border-color:transparent;color:white;box-shadow:0 7px 18px rgba(118,86,232,.22)}
+.action-btn:active{transform:scale(.97)}
+.panel{max-width:900px;margin:30px auto 0;padding:30px;border-radius:24px}
+#resultPanel.in-place{margin:0;animation:resultReveal .35s ease both}
+@keyframes resultReveal{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+#resultPanel.in-place .result-tile{padding:22px 20px;border:1px solid var(--border);background:var(--surface-2)}
+#resultPanel.in-place .result-tile:first-child{background:var(--accent-soft);border-color:rgba(118,86,232,.3)}
+#resultPanel.in-place .result-tile strong{font-size:clamp(30px,5vw,43px);letter-spacing:-1.5px}
+.result-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:24px}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+.panel h2{font-size:20px;letter-spacing:-.5px;margin:0}
+.muted{color:var(--muted);font-size:12px}
+.result-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.result-tile{background:var(--surface-2);padding:17px;border-radius:15px;min-width:0}
+.result-tile small{display:block;color:var(--muted);font-size:10px;letter-spacing:1px;font-weight:800}
+.result-tile strong{display:block;font-size:28px;margin-top:8px;color:var(--accent);font-variant-numeric:tabular-nums}
+.history-list{display:grid;gap:9px}
+.history-row{display:grid;grid-template-columns:1fr repeat(3,minmax(65px,90px));gap:12px;align-items:center;padding:14px 16px;border-radius:13px;background:var(--surface-2)}
+.history-row strong{font-size:14px}.history-row small{display:block;color:var(--muted);font-size:10px;margin-top:4px}
+.history-value{font-size:14px;font-weight:750;color:var(--accent);text-align:right;font-variant-numeric:tabular-nums}
+.empty{padding:35px 15px;text-align:center;color:var(--muted);font-size:13px}
+.hidden{display:none!important}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:10px 0 30px}
 footer b{color:var(--accent)}
-@media(max-width:600px){
- .container{padding:20px 15px}
- header{margin-bottom:65px}
- nav{gap:12px}
- nav button{font-size:12px}
- .logo{font-size:25px}
- .controls{padding:14px}
- .typing-box{padding:20px;min-height:200px}
- #words{font-size:19px}
- .stats{gap:22px}
- .stat strong{font-size:22px}
- .result-grid{grid-template-columns:repeat(2,1fr)}
+@media(max-width:650px){
+ .shell{width:min(100% - 28px,1120px)}
+ .topbar{height:64px}.brand{font-size:26px}
+ main{padding-top:18px}.hero{margin-bottom:18px}
+ h1{letter-spacing:-2px}
+ .settings{padding:14px;border-radius:18px;margin-bottom:16px}
+ .settings-top{grid-template-columns:1fr 1fr;align-items:start;gap:13px}
+ .settings-top>div:last-child{grid-column:1/-1}
+ .options{justify-content:flex-start}
+ .hero-note{font-size:10px;margin-top:9px}
+ .stats{gap:18px;justify-content:space-between}
+ .stat strong{font-size:20px}.stat.timer strong{font-size:23px}
+ .typing-card{padding:20px 17px;border-radius:18px}
+ #textContent{font-size:19px}
+ .result-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .history-row{grid-template-columns:1fr repeat(3,58px);gap:7px;padding:12px 10px}
+ .history-value{font-size:12px}
 }
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-<div class="container">
-<header>
-  <div class="logo">TYPO<span>.</span></div>
-  <nav>
-    <button class="active" id="testNav">Test</button>
-    <button id="resultNav">Results</button>
+<div class="shell">
+<header class="topbar">
+  <a class="brand" href="#" aria-label="TYPO home">TYPO<span>.</span></a>
+  <nav class="nav" aria-label="Main navigation">
+    <button id="testTab" class="active" type="button">Test</button>
+    <button id="historyTab" type="button">History</button>
   </nav>
-  <div class="header-right">
-    <button class="icon-btn" id="themeBtn" title="Toggle theme">☼</button>
-  </div>
+  <button class="round-btn" id="themeToggle" type="button" aria-label="Toggle color theme" title="Toggle theme">☼</button>
 </header>
 
 <main>
-<section class="hero">
-  <div class="eyebrow">MASTER YOUR KEYBOARD</div>
-  <h1>Type with <span style="color:var(--accent)">purpose.</span></h1>
-  <p class="subtitle">Measure your speed. Improve your accuracy. Beat your limits.</p>
+<section id="testPage">
+  <div class="hero">
+    <div class="eyebrow">YOUR PERSONAL TYPING SPEED TEST</div>
+    <h1>Test your <em>typing speed.</em></h1>
+    <p class="subtitle">Measure your WPM, accuracy and progress with a simple typing challenge.</p>
+  </div>
+
+  <section class="settings glass" aria-label="Test settings">
+    <div class="settings-top">
+      <div>
+        <div class="label">MODE</div>
+        <div class="mode-group">
+          <button class="mode-btn active" data-mode="time" type="button">◷ &nbsp;Time</button>
+          <button class="mode-btn" data-mode="words" type="button">▤ &nbsp;Words</button>
+        </div>
+      </div>
+      <div>
+        <div class="label">DURATION / WORDS</div>
+        <div class="options" id="options"></div>
+      </div>
+      <div>
+        <div class="label">DIFFICULTY</div>
+        <div class="mode-group" id="difficultyGroup">
+          <button class="mode-btn active" data-difficulty="easy" type="button">Easy</button>
+          <button class="mode-btn" data-difficulty="difficult" type="button">✦ Difficult</button>
+        </div>
+      </div>
+    </div>
+    <p class="hero-note" id="difficultyHint">Fresh text every test · Easy: lowercase words · Difficult: capitals, numbers and punctuation.</p>
+  </section>
+
+  <section class="test-wrap">
+    <div class="stats">
+      <div class="stat timer"><small id="timerLabel">TIME LEFT</small><strong id="timer">30</strong></div>
+      <div class="stat live-hidden" id="liveWpm"><small>WPM</small><strong>—</strong></div>
+      <div class="stat live-hidden" id="liveAccuracy"><small>ACCURACY</small><strong>—</strong></div>
+      <div class="stat live-hidden" id="liveErrors"><small>ERRORS</small><strong>—</strong></div>
+    </div>
+
+    <div class="typing-card glass" id="typingCard" role="group" aria-label="Typing test text. Click here and start typing.">
+      <div class="text-window" id="textWindow">
+        <div id="textContent"></div>
+      </div>
+      <textarea id="typingInput" autocomplete="off" autocapitalize="off" spellcheck="false"
+        aria-label="Typing input" rows="1"></textarea>
+    </div>
+    <div class="below">
+      <span class="hint" id="statusHint">Click the text below and start typing — your test begins with your first keystroke.</span>
+      <span class="hint"><kbd>Tab</kbd> + <kbd>Enter</kbd> restart &nbsp; <kbd>Esc</kbd> reset</span>
+    </div>
+    <div class="actions">
+      <button class="action-btn primary" id="restartBtn" type="button">↻ &nbsp;Restart test</button>
+      <button class="action-btn" id="newTextBtn" type="button">New text &nbsp;↗</button>
+    </div>
+  </section>
+
+  <section class="panel glass hidden" id="resultPanel" aria-live="polite">
+    <div class="panel-head"><h2>Session complete</h2><span class="muted" id="resultDate"></span></div>
+    <div class="result-grid">
+      <div class="result-tile"><small>WPM</small><strong id="finalWpm">0</strong></div>
+      <div class="result-tile"><small>ACCURACY</small><strong id="finalAccuracy">0%</strong></div>
+      <div class="result-tile"><small>RAW WPM</small><strong id="finalRaw">0</strong></div>
+      <div class="result-tile"><small>ERRORS</small><strong id="finalErrors">0</strong></div>
+    </div>
+    <div class="result-actions">
+      <button class="action-btn primary" id="resultRestart" type="button">↻ &nbsp;Try again</button>
+      <button class="action-btn" id="resultNewText" type="button">New text &nbsp;↗</button>
+    </div>
+  </section>
 </section>
 
-<section class="controls">
-  <div class="section-label">TEST MODE</div>
-  <div class="control-row">
-    <div class="control-group" id="modeButtons">
-      <button class="control-btn active" data-mode="time">◷ Time</button>
-      <button class="control-btn" data-mode="words">▤ Words</button>
-    </div>
-    <div class="control-group" id="options">
-      <button class="control-btn active" data-value="30">30s</button>
-      <button class="control-btn" data-value="60">60s</button>
-      <button class="control-btn" data-value="120">120s</button>
-      <button class="control-btn" data-value="15">15s</button>
-    </div>
+<section id="historyPage" class="hidden">
+  <div class="hero">
+    <div class="eyebrow">YOUR PROGRESS</div>
+    <h1>Typing <em>history.</em></h1>
+    <p class="subtitle">A record of your recent sessions, saved on this device.</p>
   </div>
-</section>
-
-<section class="test-area">
-  <div class="stats">
-    <div class="stat timer">
-      <small>TIME LEFT</small>
-      <strong id="timer">30</strong>
-    </div>
-    <div class="stat">
-      <small>WPM</small>
-      <strong id="wpm">0</strong>
-    </div>
-    <div class="stat">
-      <small>ACCURACY</small>
-      <strong id="accuracy">100%</strong>
-    </div>
-    <div class="stat">
-      <small>ERRORS</small>
-      <strong id="errors">0</strong>
-    </div>
-  </div>
-
-  <div class="typing-box" id="typingBox">
-    <div id="words"></div>
-    <input id="input" autocomplete="off" autocapitalize="off"
-      spellcheck="false" aria-label="Type the displayed text">
-  </div>
-  <p class="hint">Start typing to begin · <kbd>Tab</kbd> + <kbd>Enter</kbd> restart</p>
-</section>
-
-<div class="actions">
-  <button class="action-btn primary" id="restart">↻ Restart test</button>
-  <button class="action-btn" id="newText">New text ↗</button>
-</div>
-
-<section class="result" id="result">
-  <h2>Test completed. <span style="color:var(--accent)">Well done!</span></h2>
-  <div class="result-grid">
-    <div class="result-item"><small>WPM</small><strong id="finalWpm">0</strong></div>
-    <div class="result-item"><small>ACCURACY</small><strong id="finalAccuracy">0%</strong></div>
-    <div class="result-item"><small>RAW WPM</small><strong id="rawWpm">0</strong></div>
-    <div class="result-item"><small>ERRORS</small><strong id="finalErrors">0</strong></div>
-    <div class="result-item"><small>CHARACTERS</small><strong id="finalChars">0</strong></div>
-    <div class="result-item"><small>BEST WPM</small><strong id="bestWpm">0</strong></div>
-  </div>
+  <section class="panel glass">
+    <div class="panel-head"><h2>Recent sessions</h2><button class="action-btn" id="clearHistory" type="button">Clear history</button></div>
+    <div id="historyList" class="history-list"></div>
+  </section>
 </section>
 </main>
-
-<footer>Made for people who love <b>typing.</b> · TYPO © 2026</footer>
+<footer>Designed for focus. Built for progress. &nbsp; <b>TYPO.</b></footer>
 </div>
 
 <script>
+(() => {
+"use strict";
 const $ = id => document.getElementById(id);
-
 const passages = [
-"Success is not simply about moving fast. It is about staying consistent, learning from mistakes, and improving a little every single day.",
-"Technology continues to transform the way people communicate, learn, work, and explore the world around them.",
-"Great achievements are usually the result of small actions repeated with patience, discipline, and determination.",
-"Learning a new skill requires curiosity, practice, and the willingness to make mistakes along the way.",
-"The most valuable investment you can make is in your knowledge, your abilities, and your personal development.",
-"Education opens doors to opportunities that can change the future. Knowledge gives people the confidence to pursue ambitious goals.",
-"Every expert was once a beginner. Progress happens when you continue practicing even when improvement seems slow.",
-"Creativity is intelligence having fun. The ability to think differently can lead to extraordinary discoveries."
+"small habits create meaningful progress when people practice them with patience and purpose",
+"clear goals help us use our time wisely and make steady progress toward better results",
+"reading every day introduces new ideas and helps us express our thoughts with confidence",
+"good communication begins with careful listening and a genuine effort to understand others",
+"learning becomes easier when we stay curious ask questions and practise what we discover",
+"every useful skill grows through repetition thoughtful feedback and a willingness to improve",
+"technology can connect communities share knowledge and make everyday tasks more efficient",
+"creative thinking helps people find fresh solutions to familiar problems and new challenges",
+"strong routines make difficult tasks feel manageable and turn effort into lasting progress",
+"careful planning gives us direction while flexibility helps us respond to unexpected changes",
+"the best way to improve is to focus on one small step and repeat it consistently",
+"books can take us to distant places introduce remarkable people and expand our imagination",
+"teamwork succeeds when everyone contributes ideas respects others and shares responsibility",
+"asking thoughtful questions is often the first step toward discovering a better answer",
+"practice builds confidence because each attempt makes a familiar task a little easier",
+"curiosity encourages us to explore different subjects and understand how the world works",
+"writing clearly helps readers follow our ideas and understand the message we want to share",
+"being organised can reduce distractions and leave more time for meaningful activities",
+"progress is not always quick but consistent effort can produce impressive long term results",
+"new experiences teach us to adapt consider different viewpoints and make informed decisions",
+"attention to detail matters because small improvements can make a noticeable difference",
+"learning with friends can make challenging ideas easier to discuss and remember",
+"successful projects begin with a clear purpose realistic steps and regular communication",
+"taking time to reflect helps us recognise progress and decide what to practise next",
+"good questions lead to deeper understanding and encourage us to look beyond simple answers",
+"the ability to concentrate improves when we remove distractions and work with intention",
+"knowledge becomes more valuable when we apply it to real problems and useful projects",
+"everyday observations can inspire creative ideas when we remain open to new possibilities",
+"steady progress comes from useful habits rather than waiting for the perfect moment",
+"sharing what we learn can help other people discover opportunities and build confidence",
+"effective problem solving starts by understanding the situation before choosing a solution",
+"patience allows us to examine mistakes and find a better approach without rushing",
+"clear writing uses precise words logical structure and examples that support the main idea",
+"people develop expertise by combining curiosity regular practice and honest self evaluation",
+"a balanced schedule makes room for study rest creativity and time with other people",
+"good design makes information easier to understand while keeping the experience enjoyable",
+"small acts of kindness can strengthen communities and create a more welcoming environment",
+"asking for feedback gives us another perspective and reveals ways to improve our work",
+"careful research helps us separate reliable information from claims that need more evidence",
+"the most useful lessons often come from trying something new and reflecting on the result"
 ];
+const difficultPassages = [
+"On October 18, 2026, the team reviewed 4 projects; 3 were complete, while 1 needed another test.",
+"Can we finish version 2.5 by Friday? Please send the final report before 4:30 p.m.",
+"Accuracy matters: 98% is strong, but 100% requires every character to be checked.",
+"At 7:45 a.m., Maya opened file Report_2026.docx and reviewed items 1, 2, and 3.",
+"The total cost was $248.75; after a 12% discount, the final price changed.",
+"Is the new system faster? Yes, it processed 1,250 records in just 3.8 seconds!",
+"Important: save your work, check the spelling, and press Enter when the form is complete.",
+"Dr. Lee asked, \"Have you tested the new feature?\" The answer was, \"Not yet!\"",
+"Plan A starts at 09:15; Plan B begins at 10:45. Which option works best?",
+"Use a strong password, enable 2-step verification, and review your account settings.",
+"On page 14, paragraph 2 contains the key detail: the deadline is November 30, 2026.",
+"Try this sequence: open the menu, select Settings, choose Theme, and click Save.",
+"The survey included 520 students; 312 preferred option A, while 208 selected option B.",
+"Remember these values: 15, 30, 60, and 120 seconds. Each test measures a different pace.",
+"Why did the result change? The input was corrected, the timer was checked, and the test ran again.",
+"Version 3.1 includes 6 improvements, 2 new themes, and a redesigned results panel.",
+"At 18:20, the server recorded 42 requests; only 2 required further investigation.",
+"Please compare these figures: 72.5, 81.0, and 94.25. Which one is the highest?",
+"Good work is not always perfect at first; review, revise, and try again.",
+"Did the update solve the issue? Check the display, test the buttons, and confirm the result.",
+"Set the target to 85 WPM, keep accuracy above 97%, and practise for 20 minutes.",
+"The meeting is scheduled for Monday, June 7, at 11:30 a.m.; bring your notes.",
+"Warning: this action cannot be undone. Review the details before selecting Confirm.",
+"First, collect the data; next, check the totals; finally, share the summary with the team.",
+"She wrote, \"Small changes matter.\" Then she added: \"Measure the result, not the intention.\"",
+"Reference code: TX-2048. Contact the support team between 08:00 and 17:00.",
+"Choose one answer: A) 25%, B) 40%, C) 65%, or D) 80%.",
+"The test found 7 errors in 350 characters; the remaining entries matched the source.",
+"Does 5 × 8 equal 40? Yes; does 9 × 7 equal 63? Yes!",
+"Save as draft, review the title, and submit the document by 5:00 p.m."
+];
+const wordPool = [...new Set(passages.join(" ").split(/\s+/).filter(Boolean))];
+const difficultWordPool = [
+  "Focus","keyboard","2026","Practice","accuracy","98%","Challenge","typing","42",
+  "Improve","results","75","Learning","progress","Version-2","Question?","Reliable",
+  "Efficiency","3.14","Research","carefully","Update","$250.00","System","Analysis",
+  "Tomorrow","16:45","Excellent","method","87%","Development","Review","Success!",
+  "Example","42nd","Technology","Decision","Perhaps","Important:","Option-A","Measure",
+  "consistent","1,250","Performance","Discover","However","Compare","Final.","Really?",
+  "Project","Deadline","3.8","Careful;","Achievement","Reliable","Practice!"
+];
+let passageOrder = [], passageCursor = 0, lastPassage = "";
+let mode="time", difficulty="easy", duration=30, wordCount=25, text="", started=false, finished=false;
+let startAt=0, endAt=0, timerId=null, typed="", keyAttempts=0, correctKeyAttempts=0, best=Number(localStorage.getItem("typo-best")||0);
+let history=loadHistory(), charNodes=[];
 
-let mode = "time";
-let duration = 30;
-let totalWords = 25;
-let text = "";
-let started = false;
-let finished = false;
-let startTime = 0;
-let timerInterval = null;
-let best = Number(localStorage.getItem("typo-best") || 0);
-
-const input = $("input");
-
-function randomText() {
-  let output = [];
-  while(output.join(" ").length < 1800) {
-    output.push(passages[Math.floor(Math.random()*passages.length)]);
-  }
-  return output.join(" ").replace(/\s+/g," ").trim();
+function loadHistory(){
+  try { const value=JSON.parse(localStorage.getItem("typo-history")||"[]"); return Array.isArray(value)?value:[]; }
+  catch { return []; }
 }
-
-function renderText() {
-  const typed = input.value;
-  $("words").innerHTML = [...text].map((char,i) => {
-    let cls = "";
-    if(i < typed.length) {
-      cls = typed[i] === char ? "correct" : "incorrect";
-    } else if(i === typed.length) {
-      cls = "current";
+function saveHistory(){ try{localStorage.setItem("typo-history",JSON.stringify(history.slice(0,30)));}catch{} }
+function cleanEasyText(value){
+  return value.toLowerCase().replace(/[^a-z\s]/g," ").replace(/\s+/g," ").trim();
+}
+function randomPassage(){
+  const pool = difficulty==="difficult" ? difficultPassages : passages;
+  if(passageCursor >= passageOrder.length){
+    passageOrder = pool.map((_,i)=>i);
+    for(let i=passageOrder.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [passageOrder[i],passageOrder[j]]=[passageOrder[j],passageOrder[i]];
     }
-    return `<span class="char ${cls}">${char === " " ? "&nbsp;" : escapeHTML(char)}</span>`;
+    passageCursor=0;
+    if(pool.length>1 && pool[passageOrder[0]]===lastPassage){
+      [passageOrder[0],passageOrder[1]]=[passageOrder[1],passageOrder[0]];
+    }
+  }
+  const selected=pool[passageOrder[passageCursor++]];
+  lastPassage=selected;
+  return difficulty==="difficult" ? selected : cleanEasyText(selected);
+}
+function makeWords(n){
+  const result=[];
+  for(let i=0;i<n;i++){
+    if(difficulty==="difficult"){
+      let token=difficultWordPool[Math.floor(Math.random()*difficultWordPool.length)];
+      if(i%7===3) token += [".",",","?","!",";"][Math.floor(Math.random()*5)];
+      result.push(token);
+    } else {
+      result.push(wordPool[Math.floor(Math.random()*wordPool.length)]);
+    }
+  }
+  return result.join(" ");
+}
+function escapeHTML(s){
+  return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function buildText(){
+  text=mode==="words"?makeWords(wordCount):randomPassage()+" "+randomPassage();
+  typed=""; $("typingInput").value="";
+  $("textContent").innerHTML=[...text].map((ch,i)=>`<span class="char${i===0?" current":""}" data-index="${i}">${ch===" "?"&nbsp;":escapeHTML(ch)}</span>`).join("");
+  charNodes=[...$("textContent").children];
+  $("textWindow").scrollTop=0;
+}
+function setOptions(){
+  const values=mode==="time"?[15,30,60,120]:[10,25,50,100];
+  const selected=mode==="time"?duration:wordCount;
+  $("options").innerHTML=values.map(v=>`<button type="button" class="option-btn${v===selected?" active":""}" data-value="${v}">${mode==="time"?v+"s":v+" words"}</button>`).join("");
+  $("options").querySelectorAll("button").forEach(btn=>btn.addEventListener("click",()=>{
+    if(mode==="time") duration=Number(btn.dataset.value); else wordCount=Number(btn.dataset.value);
+    setOptions(); reset(false);
+  }));
+}
+function reset(newText=false){
+  clearTimeout(timerId);timerId=null;started=false;finished=false;
+  $("typingInput").value="";typed="";keyAttempts=0;correctKeyAttempts=0;
+  $("timerLabel").textContent=mode==="time"?"TIME LEFT":"WORDS";
+  $("timer").textContent=mode==="time"?duration:wordCount;
+  $("liveWpm").classList.add("live-hidden");
+  $("liveAccuracy").classList.add("live-hidden");
+  $("liveErrors").classList.add("live-hidden");
+  $("resultPanel").classList.add("hidden");
+  $("resultPanel").classList.remove("in-place");
+  $("typingCard").classList.remove("hidden");
+  document.querySelector(".test-wrap .stats").classList.remove("hidden");
+  document.querySelector(".test-wrap .below").classList.remove("hidden");
+  document.querySelector(".test-wrap .actions").classList.remove("hidden");
+  $("statusHint").textContent="Click the text area and start typing";
+  buildText();
+}
+function begin(){
+  if(started||finished)return;
+  started=true;
+  startAt=performance.now();
+  endAt=mode==="time"?startAt+duration*1000:0;
+  $("statusHint").textContent="Keep going — focus on accuracy";
+  if(mode==="time"){
+    const tick=()=>{
+      if(finished)return;
+      const remaining=Math.max(0,endAt-performance.now());
+      $("timer").textContent=String(Math.ceil(remaining/1000));
+      if(remaining<=0){$("timer").textContent="0";complete(true);return;}
+      timerId=setTimeout(tick,Math.min(50,remaining));
+    };
+    tick();
+  }
+}
+function calculate(timeExpired=false){
+  // Monkeytype-style WPM: count characters (and following spaces) in
+  // correctly completed words. A mistyped word earns no WPM credit.
+  const targetWords=text.split(" ");
+  const typedWords=typed.split(" ");
+  let creditedChars=0;
+  for(let i=0;i<typedWords.length && i<targetWords.length;i++){
+    if(typedWords[i]===targetWords[i]){
+      creditedChars+=targetWords[i].length;
+      if(i<typedWords.length-1 && typed[i+targetWords[i].length]===" "){
+        creditedChars++;
+      }
+    }
+  }
+
+  // Final visible errors: wrong characters still present in the submitted text.
+  let errors=0;
+  for(let i=0;i<typed.length;i++){
+    if(typed[i]!==text[i]) errors++;
+  }
+
+  const elapsedSeconds=(mode==="time" && timeExpired)
+    ? duration
+    : Math.max((performance.now()-startAt)/1000,0.001);
+  const elapsedMinutes=elapsedSeconds/60;
+  const raw=keyAttempts/5/elapsedMinutes;
+  const net=creditedChars/5/elapsedMinutes;
+  const accuracy=keyAttempts?correctKeyAttempts/keyAttempts*100:100;
+
+  return {
+    correct:creditedChars,errors,
+    raw:Number(raw.toFixed(1)),
+    wpm:Number(net.toFixed(1)),
+    accuracy:Number(accuracy.toFixed(2)),
+    elapsed:elapsedSeconds,
+    keyAttempts,correctKeyAttempts
+  };
+}
+function updateChars(){
+  const current=typed.length;
+  for(let i=0;i<charNodes.length;i++){
+    const node=charNodes[i];
+    node.className="char";
+    if(i<current) node.classList.add(typed[i]===text[i]?"correct":"incorrect");
+    else if(i===current&&!finished) node.classList.add("current");
+  }
+  const currentNode=charNodes[Math.min(current,charNodes.length-1)];
+  if(currentNode){
+    const lineHeight=parseFloat(getComputedStyle($("textContent")).lineHeight)||36;
+    const top=currentNode.offsetTop;
+    const target=Math.max(0,top-lineHeight);
+    if(target>$("textWindow").scrollTop+1 || top<$("textWindow").scrollTop+lineHeight*.25){
+      $("textWindow").scrollTop=target;
+    }
+  }
+}
+function onTyping(){
+  if(finished)return;
+  typed=$("typingInput").value;
+  if(typed.length>text.length){typed=typed.slice(0,text.length);$("typingInput").value=typed;}
+  if(typed.length>0&&!started)begin();
+  updateChars();
+  if(mode==="words"&&typed.length>=text.length)complete();
+  else if(mode==="time"&&typed.length>=text.length){
+    text += " "+randomPassage();
+    const oldLength=charNodes.length;
+    const fragment=document.createDocumentFragment();
+    [...text.slice(oldLength)].forEach((ch,i)=>{
+      const span=document.createElement("span");span.className="char";span.dataset.index=oldLength+i;
+      span.innerHTML=ch===" "?"&nbsp;":escapeHTML(ch);fragment.appendChild(span);
+    });
+    $("textContent").appendChild(fragment);
+    charNodes=[...$("textContent").children];
+    updateChars();
+  }
+}
+function complete(timeExpired=false){
+  if(finished)return;
+  finished=true;
+  clearTimeout(timerId);timerId=null;
+  if(!started){started=true;startAt=performance.now()-1;}
+  const s=calculate(timeExpired);
+  if(s.wpm>best){best=s.wpm;localStorage.setItem("typo-best",String(best));}
+
+  $("finalWpm").textContent=Number(s.wpm).toFixed(1);
+  $("finalAccuracy").textContent=Number(s.accuracy).toFixed(2)+"%";
+  $("finalRaw").textContent=Number(s.raw).toFixed(1);
+  $("finalErrors").textContent=String(s.errors);
+  $("resultDate").textContent=new Date().toLocaleString();
+
+  const record={wpm:s.wpm,accuracy:s.accuracy,raw:s.raw,errors:s.errors,
+    correct:s.correct,typed:typed.length,elapsed:s.elapsed,keyAttempts:s.keyAttempts,correctKeyAttempts:s.correctKeyAttempts,
+    date:new Date().toISOString(),mode:mode,setting:mode==="time"?duration:wordCount};
+  history.unshift(record);history=history.slice(0,30);saveHistory();renderHistory();
+
+  $("typingCard").classList.add("hidden");
+  document.querySelector(".test-wrap .stats").classList.add("hidden");
+  document.querySelector(".test-wrap .below").classList.add("hidden");
+  document.querySelector(".test-wrap .actions").classList.add("hidden");
+  $("resultPanel").classList.remove("hidden");
+  $("resultPanel").classList.add("in-place");
+  document.querySelector(".test-wrap").appendChild($("resultPanel"));
+  $("statusHint").textContent="Test complete — your results are ready";
+}
+function renderHistory(){
+  const list=$("historyList");
+  if(!history.length){list.innerHTML='<div class="empty">No sessions yet. Complete a typing test and your results will appear here.</div>';return;}
+  list.innerHTML=history.map(item=>{
+    const date=new Date(item.date);
+    const label=Number.isFinite(date.getTime())?date.toLocaleString():"Previous session";
+    return `<div class="history-row">
+      <div><strong>${escapeHTML(label)}</strong><small>${item.mode==="time"?item.setting+" second test":item.setting+" word test"}</small></div>
+      <div class="history-value">${item.wpm}<small>WPM</small></div>
+      <div class="history-value">${Number(item.accuracy).toFixed(2)}%<small>Accuracy</small></div>
+      <div class="history-value">${item.errors}<small>Errors</small></div>
+    </div>`;
   }).join("");
 }
-
-function escapeHTML(s) {
-  return s.replace(/[&<>"']/g,c=>({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  })[c]);
+function showPage(page){
+  const isTest=page==="test";
+  $("testPage").classList.toggle("hidden",!isTest);
+  $("historyPage").classList.toggle("hidden",isTest);
+  $("testTab").classList.toggle("active",isTest);
+  $("historyTab").classList.toggle("active",!isTest);
+  if(!isTest)renderHistory();
 }
-
-function getStats() {
-  const typed = input.value;
-  let correct = 0;
-  let errors = 0;
-  for(let i=0;i<typed.length;i++){
-    if(typed[i] === text[i]) correct++;
-    else errors++;
-  }
-  const elapsed = started ? Math.max((Date.now()-startTime)/60000,1/60) : 0;
-  const raw = elapsed ? Math.round(typed.length/5/elapsed) : 0;
-  const wpm = elapsed ? Math.round(correct/5/elapsed) : 0;
-  const accuracy = typed.length ? Math.round(correct/typed.length*100) : 100;
-  return {correct,errors,raw,wpm,accuracy,typed};
-}
-
-function updateStats(){
-  const s = getStats();
-  $("wpm").textContent = s.wpm;
-  $("accuracy").textContent = s.accuracy+"%";
-  $("errors").textContent = s.errors;
-}
-
-function start(){
-  if(started || finished) return;
-  started = true;
-  startTime = Date.now();
-  if(mode === "time"){
-    timerInterval = setInterval(()=>{
-      const elapsed = (Date.now()-startTime)/1000;
-      const left = Math.max(0,duration-Math.floor(elapsed));
-      $("timer").textContent = left;
-      if(left <= 0) finish();
-    },100);
-  }
-}
-
-function finish(){
-  if(finished) return;
-  finished = true;
-  clearInterval(timerInterval);
-  const s = getStats();
-  if(s.wpm > best){
-    best = s.wpm;
-    localStorage.setItem("typo-best",best);
-  }
-  $("finalWpm").textContent = s.wpm;
-  $("finalAccuracy").textContent = s.accuracy+"%";
-  $("rawWpm").textContent = s.raw;
-  $("finalErrors").textContent = s.errors;
-  $("finalChars").textContent = s.typed.length;
-  $("bestWpm").textContent = best;
-  $("result").style.display = "block";
-  $("timer").textContent = mode === "time" ? "0" : $("timer").textContent;
-  $("result").scrollIntoView({behavior:"smooth",block:"nearest"});
-}
-
-function reset(newPassage = false){
-  clearInterval(timerInterval);
-  started = false;
-  finished = false;
-  input.value = "";
-  if(newPassage) text = randomText();
-  else if(mode === "words") text = makeWordText(totalWords);
-  $("timer").textContent = mode === "time" ? duration : totalWords;
-  $("result").style.display = "none";
-  renderText();
-  updateStats();
-  input.focus();
-}
-
-function makeWordText(count){
-  const pool = passages.join(" ").replace(/[.,]/g,"").split(" ");
-  const words = [];
-  for(let i=0;i<count;i++) words.push(pool[Math.floor(Math.random()*pool.length)]);
-  return words.join(" ");
-}
-
-input.addEventListener("input",()=>{
-  if(finished) return;
-  if(!started && input.value.length) start();
-  renderText();
-  updateStats();
-  if(mode === "words" && input.value.length >= text.length) finish();
-  if(input.value.length >= text.length) finish();
+$("typingCard").addEventListener("pointerdown",e=>{
+  if(e.target.closest("button"))return;
+  $("typingInput").focus({preventScroll:true});
 });
-
-$("typingBox").addEventListener("click",()=>input.focus());
-$("restart").onclick=()=>reset();
-$("newText").onclick=()=>reset(true);
-
-document.querySelectorAll("[data-mode]").forEach(btn=>{
-  btn.onclick=()=>{
-    mode=btn.dataset.mode;
-    document.querySelectorAll("[data-mode]").forEach(b=>b.classList.toggle("active",b===btn));
-    document.querySelectorAll("#options button").forEach(b=>b.classList.toggle("active",Number(b.dataset.value)===(mode==="time"?duration:totalWords)));
-    reset();
-  };
+$("typingInput").addEventListener("beforeinput",e=>{
+  if(finished)return;
+  if(e.inputType==="insertFromPaste"){e.preventDefault();return;}
+  if(e.inputType==="insertText" && typeof e.data==="string"){
+    [...e.data].forEach((character,index)=>{
+      keyAttempts++;
+      if(character===text[typed.length+index]) correctKeyAttempts++;
+    });
+  }
 });
-
-function updateOptions(){
-  $("options").innerHTML=(mode==="time"?[15,30,60,120]:[10,25,50,100]).map(v=>
-    `<button class="control-btn ${v===(mode==="time"?duration:totalWords)?"active":""}" data-value="${v}">${mode==="time"?v+"s":v}</button>`
-  ).join("");
-  $("options").querySelectorAll("button").forEach(btn=>{
-    btn.onclick=()=>{
-      if(mode==="time") duration=Number(btn.dataset.value);
-      else totalWords=Number(btn.dataset.value);
-      updateOptions();
-      reset();
-    };
-  });
-}
-document.querySelectorAll("[data-mode]").forEach(btn=>{
-  btn.addEventListener("click",updateOptions);
+$("typingInput").addEventListener("input",onTyping);
+$("typingInput").addEventListener("paste",e=>e.preventDefault());
+$("typingInput").addEventListener("keydown",e=>{
+  if(e.key==="Enter"||e.key==="Tab")e.preventDefault();
 });
-
-$("themeBtn").onclick=()=>{
-  document.body.classList.toggle("light");
-  localStorage.setItem("typo-theme",document.body.classList.contains("light")?"light":"dark");
-};
-if(localStorage.getItem("typo-theme")==="light") document.body.classList.add("light");
-
-$("testNav").onclick=()=>{
-  $("typingBox").scrollIntoView({behavior:"smooth"});
-  input.focus();
-};
-$("resultNav").onclick=()=>{
-  if($("result").style.display==="block") $("result").scrollIntoView({behavior:"smooth"});
-};
-
+$("restartBtn").addEventListener("click",()=>{reset(false);$("typingInput").focus({preventScroll:true});});
+$("newTextBtn").addEventListener("click",()=>{reset(true);$("typingInput").focus({preventScroll:true});});
+$("resultRestart").addEventListener("click",()=>{reset(false);$("typingInput").focus({preventScroll:true});});
+$("resultNewText").addEventListener("click",()=>{reset(true);$("typingInput").focus({preventScroll:true});});
+document.querySelectorAll("[data-mode]").forEach(btn=>btn.addEventListener("click",()=>{
+  mode=btn.dataset.mode;
+  document.querySelectorAll("[data-mode]").forEach(b=>b.classList.toggle("active",b===btn));
+  setOptions();reset(true);
+}));
+document.querySelectorAll("[data-difficulty]").forEach(btn=>btn.addEventListener("click",()=>{
+  difficulty=btn.dataset.difficulty;
+  passageOrder=[];passageCursor=0;lastPassage="";
+  document.querySelectorAll("[data-difficulty]").forEach(b=>b.classList.toggle("active",b===btn));
+  $("difficultyHint").textContent=difficulty==="easy"
+    ?"Lowercase words only — no commas, capitals, numbers or punctuation."
+    :"Capital letters, numbers and punctuation: commas, periods, question marks and more.";
+  reset(true);
+}));
+$("themeToggle").addEventListener("click",()=>{
+  document.body.classList.toggle("dark");
+  const dark=document.body.classList.contains("dark");
+  localStorage.setItem("typo-theme",dark?"dark":"light");
+  document.querySelector('meta[name="theme-color"]').content=dark?"#101117":"#f4f5fb";
+  $("themeToggle").textContent=dark?"☾":"☼";
+});
+$("testTab").addEventListener("click",()=>showPage("test"));
+$("historyTab").addEventListener("click",()=>showPage("history"));
+$("clearHistory").addEventListener("click",()=>{
+  if(!history.length)return;
+  if(confirm("Clear all saved typing sessions on this device?")){
+    history=[];saveHistory();renderHistory();
+  }
+});
 document.addEventListener("keydown",e=>{
-  if(e.key==="Tab"){
-    e.preventDefault();
-    if(e.shiftKey) return;
-    if(document.activeElement===input){
-      reset();
-    }else{
-      input.focus();
-    }
+  const tag=document.activeElement?.tagName;
+  const typingFocused=document.activeElement===$("typingInput");
+  if(e.key==="Escape"&&typingFocused){reset(false);$("typingInput").blur();return;}
+  if(e.key==="Tab"&&!e.shiftKey&&typingFocused){
+    e.preventDefault();window._typoTabPressed=true;return;
   }
-  if(e.key==="Enter" && e.shiftKey){
-    e.preventDefault();
-    reset(true);
+  if(e.key==="Enter"&&window._typoTabPressed){
+    e.preventDefault();window._typoTabPressed=false;reset(false);$("typingInput").focus({preventScroll:true});return;
+  }
+  if(e.key!=="Tab")window._typoTabPressed=false;
+  if(!typingFocused&&tag!=="BUTTON"&&tag!=="INPUT"&&tag!=="TEXTAREA"&&e.key.length===1&&!e.ctrlKey&&!e.metaKey&&!e.altKey){
+    if(!$("historyPage").classList.contains("hidden"))return;
+    $("typingInput").focus({preventScroll:true});
   }
 });
-
-updateOptions();
-reset();
+if(localStorage.getItem("typo-theme")==="dark"){
+  document.body.classList.add("dark");$("themeToggle").textContent="☾";
+  document.querySelector('meta[name="theme-color"]').content="#101117";
+}
+setOptions();buildText();reset(false);renderHistory();
+})();
 </script>
 </body>
 </html>

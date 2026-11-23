@@ -1,0 +1,420 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111318">
+<meta name="description" content="TYPO — Improve your typing speed, accuracy and productivity.">
+<title>TYPO — Typing Speed Test</title>
+<style>
+:root {
+  --bg:#111318;
+  --panel:#191c24;
+  --panel2:#20242e;
+  --text:#e5e7eb;
+  --muted:#777f90;
+  --accent:#a78bfa;
+  --correct:#a78bfa;
+  --error:#ef6464;
+  --border:#292e3a;
+}
+body.light {
+  --bg:#f5f6fa;
+  --panel:#ffffff;
+  --panel2:#edf0f6;
+  --text:#202433;
+  --muted:#81899b;
+  --accent:#7654d9;
+  --correct:#7654d9;
+  --error:#dc4545;
+  --border:#e3e6ee;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body {
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,system-ui,-apple-system,sans-serif;
+  min-height:100vh;
+  transition:.25s;
+}
+button{font:inherit;cursor:pointer}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.container{max-width:1100px;margin:auto;padding:30px 24px}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:95px}
+.logo{font-size:30px;font-weight:900;letter-spacing:-2px;color:var(--text)}
+.logo span{color:var(--accent)}
+nav{display:flex;gap:26px}
+nav button,.icon-btn{
+  background:none;border:0;color:var(--muted);font-size:14px;
+  transition:.2s;
+}
+nav button:hover,nav button.active{color:var(--accent)}
+.header-right{display:flex;gap:12px}
+.icon-btn{font-size:19px;padding:8px}
+main{max-width:850px;margin:auto}
+.hero{text-align:center;margin-bottom:55px}
+.eyebrow{color:var(--accent);font-size:12px;letter-spacing:3px;font-weight:800}
+h1{font-size:clamp(42px,7vw,68px);letter-spacing:-4px;margin:14px 0}
+.subtitle{color:var(--muted);font-size:15px}
+.section-label{color:var(--muted);font-size:11px;letter-spacing:2px;font-weight:800;margin-bottom:13px}
+.controls{background:var(--panel);border:1px solid var(--border);border-radius:15px;padding:20px;margin-bottom:35px}
+.control-row{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap}
+.control-group{display:flex;gap:6px;flex-wrap:wrap}
+.control-btn{
+  padding:9px 14px;border:1px solid transparent;border-radius:8px;
+  color:var(--muted);background:transparent;font-size:13px;
+}
+.control-btn.active{background:var(--panel2);color:var(--accent);border-color:var(--border)}
+.separator{height:1px;background:var(--border);margin:17px 0}
+.test-area{position:relative;margin-bottom:30px}
+.stats{display:flex;gap:35px;margin-bottom:20px;flex-wrap:wrap}
+.stat small{display:block;color:var(--muted);font-size:11px;letter-spacing:1px}
+.stat strong{display:block;font-size:27px;color:var(--accent);margin-top:3px;font-weight:600}
+.timer strong{font-size:35px}
+.typing-box{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:15px;padding:35px;min-height:205px;
+  position:relative;cursor:text;
+}
+#words{
+  font-size:23px;line-height:1.9;letter-spacing:.4px;
+  color:var(--muted);word-break:break-word;
+  user-select:none;
+}
+.char.correct{color:var(--correct)}
+.char.incorrect{color:var(--error);background:#ef646420;border-radius:3px}
+.char.current{position:relative}
+.char.current:before{
+  content:"";position:absolute;left:-2px;top:4px;height:26px;
+  width:2px;background:var(--accent);animation:blink 1s infinite;
+}
+@keyframes blink{50%{opacity:0}}
+#input{
+  position:absolute;opacity:0;width:1px;height:1px;
+  pointer-events:none;
+}
+.hint{text-align:center;color:var(--muted);font-size:12px;margin-top:17px}
+.hint kbd{background:var(--panel2);padding:4px 8px;border-radius:5px}
+.actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.action-btn{
+  border:1px solid var(--border);background:var(--panel);
+  color:var(--text);padding:12px 20px;border-radius:9px;font-size:13px;
+}
+.action-btn.primary{background:var(--accent);color:#171321;border-color:var(--accent);font-weight:800}
+.action-btn:hover{transform:translateY(-2px)}
+.result{
+  display:none;background:var(--panel);border:1px solid var(--border);
+  border-radius:15px;padding:28px;margin-top:30px;
+}
+.result h2{font-size:25px;margin-bottom:22px}
+.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.result-item{background:var(--panel2);padding:18px;border-radius:10px}
+.result-item small{color:var(--muted);font-size:11px}
+.result-item strong{display:block;font-size:29px;color:var(--accent);margin-top:8px}
+footer{margin-top:100px;text-align:center;color:var(--muted);font-size:12px;padding-bottom:25px}
+footer b{color:var(--accent)}
+@media(max-width:600px){
+ .container{padding:20px 15px}
+ header{margin-bottom:65px}
+ nav{gap:12px}
+ nav button{font-size:12px}
+ .logo{font-size:25px}
+ .controls{padding:14px}
+ .typing-box{padding:20px;min-height:200px}
+ #words{font-size:19px}
+ .stats{gap:22px}
+ .stat strong{font-size:22px}
+ .result-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <div class="logo">TYPO<span>.</span></div>
+  <nav>
+    <button class="active" id="testNav">Test</button>
+    <button id="resultNav">Results</button>
+  </nav>
+  <div class="header-right">
+    <button class="icon-btn" id="themeBtn" title="Toggle theme">☼</button>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="eyebrow">MASTER YOUR KEYBOARD</div>
+  <h1>Type with <span style="color:var(--accent)">purpose.</span></h1>
+  <p class="subtitle">Measure your speed. Improve your accuracy. Beat your limits.</p>
+</section>
+
+<section class="controls">
+  <div class="section-label">TEST MODE</div>
+  <div class="control-row">
+    <div class="control-group" id="modeButtons">
+      <button class="control-btn active" data-mode="time">◷ Time</button>
+      <button class="control-btn" data-mode="words">▤ Words</button>
+    </div>
+    <div class="control-group" id="options">
+      <button class="control-btn active" data-value="30">30s</button>
+      <button class="control-btn" data-value="60">60s</button>
+      <button class="control-btn" data-value="120">120s</button>
+      <button class="control-btn" data-value="15">15s</button>
+    </div>
+  </div>
+</section>
+
+<section class="test-area">
+  <div class="stats">
+    <div class="stat timer">
+      <small>TIME LEFT</small>
+      <strong id="timer">30</strong>
+    </div>
+    <div class="stat">
+      <small>WPM</small>
+      <strong id="wpm">0</strong>
+    </div>
+    <div class="stat">
+      <small>ACCURACY</small>
+      <strong id="accuracy">100%</strong>
+    </div>
+    <div class="stat">
+      <small>ERRORS</small>
+      <strong id="errors">0</strong>
+    </div>
+  </div>
+
+  <div class="typing-box" id="typingBox">
+    <div id="words"></div>
+    <input id="input" autocomplete="off" autocapitalize="off"
+      spellcheck="false" aria-label="Type the displayed text">
+  </div>
+  <p class="hint">Start typing to begin · <kbd>Tab</kbd> + <kbd>Enter</kbd> restart</p>
+</section>
+
+<div class="actions">
+  <button class="action-btn primary" id="restart">↻ Restart test</button>
+  <button class="action-btn" id="newText">New text ↗</button>
+</div>
+
+<section class="result" id="result">
+  <h2>Test completed. <span style="color:var(--accent)">Well done!</span></h2>
+  <div class="result-grid">
+    <div class="result-item"><small>WPM</small><strong id="finalWpm">0</strong></div>
+    <div class="result-item"><small>ACCURACY</small><strong id="finalAccuracy">0%</strong></div>
+    <div class="result-item"><small>RAW WPM</small><strong id="rawWpm">0</strong></div>
+    <div class="result-item"><small>ERRORS</small><strong id="finalErrors">0</strong></div>
+    <div class="result-item"><small>CHARACTERS</small><strong id="finalChars">0</strong></div>
+    <div class="result-item"><small>BEST WPM</small><strong id="bestWpm">0</strong></div>
+  </div>
+</section>
+</main>
+
+<footer>Made for people who love <b>typing.</b> · TYPO © 2026</footer>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+const passages = [
+"Success is not simply about moving fast. It is about staying consistent, learning from mistakes, and improving a little every single day.",
+"Technology continues to transform the way people communicate, learn, work, and explore the world around them.",
+"Great achievements are usually the result of small actions repeated with patience, discipline, and determination.",
+"Learning a new skill requires curiosity, practice, and the willingness to make mistakes along the way.",
+"The most valuable investment you can make is in your knowledge, your abilities, and your personal development.",
+"Education opens doors to opportunities that can change the future. Knowledge gives people the confidence to pursue ambitious goals.",
+"Every expert was once a beginner. Progress happens when you continue practicing even when improvement seems slow.",
+"Creativity is intelligence having fun. The ability to think differently can lead to extraordinary discoveries."
+];
+
+let mode = "time";
+let duration = 30;
+let totalWords = 25;
+let text = "";
+let started = false;
+let finished = false;
+let startTime = 0;
+let timerInterval = null;
+let best = Number(localStorage.getItem("typo-best") || 0);
+
+const input = $("input");
+
+function randomText() {
+  let output = [];
+  while(output.join(" ").length < 1800) {
+    output.push(passages[Math.floor(Math.random()*passages.length)]);
+  }
+  return output.join(" ").replace(/\s+/g," ").trim();
+}
+
+function renderText() {
+  const typed = input.value;
+  $("words").innerHTML = [...text].map((char,i) => {
+    let cls = "";
+    if(i < typed.length) {
+      cls = typed[i] === char ? "correct" : "incorrect";
+    } else if(i === typed.length) {
+      cls = "current";
+    }
+    return `<span class="char ${cls}">${char === " " ? "&nbsp;" : escapeHTML(char)}</span>`;
+  }).join("");
+}
+
+function escapeHTML(s) {
+  return s.replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[c]);
+}
+
+function getStats() {
+  const typed = input.value;
+  let correct = 0;
+  let errors = 0;
+  for(let i=0;i<typed.length;i++){
+    if(typed[i] === text[i]) correct++;
+    else errors++;
+  }
+  const elapsed = started ? Math.max((Date.now()-startTime)/60000,1/60) : 0;
+  const raw = elapsed ? Math.round(typed.length/5/elapsed) : 0;
+  const wpm = elapsed ? Math.round(correct/5/elapsed) : 0;
+  const accuracy = typed.length ? Math.round(correct/typed.length*100) : 100;
+  return {correct,errors,raw,wpm,accuracy,typed};
+}
+
+function updateStats(){
+  const s = getStats();
+  $("wpm").textContent = s.wpm;
+  $("accuracy").textContent = s.accuracy+"%";
+  $("errors").textContent = s.errors;
+}
+
+function start(){
+  if(started || finished) return;
+  started = true;
+  startTime = Date.now();
+  if(mode === "time"){
+    timerInterval = setInterval(()=>{
+      const elapsed = (Date.now()-startTime)/1000;
+      const left = Math.max(0,duration-Math.floor(elapsed));
+      $("timer").textContent = left;
+      if(left <= 0) finish();
+    },100);
+  }
+}
+
+function finish(){
+  if(finished) return;
+  finished = true;
+  clearInterval(timerInterval);
+  const s = getStats();
+  if(s.wpm > best){
+    best = s.wpm;
+    localStorage.setItem("typo-best",best);
+  }
+  $("finalWpm").textContent = s.wpm;
+  $("finalAccuracy").textContent = s.accuracy+"%";
+  $("rawWpm").textContent = s.raw;
+  $("finalErrors").textContent = s.errors;
+  $("finalChars").textContent = s.typed.length;
+  $("bestWpm").textContent = best;
+  $("result").style.display = "block";
+  $("timer").textContent = mode === "time" ? "0" : $("timer").textContent;
+  $("result").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+function reset(newPassage = false){
+  clearInterval(timerInterval);
+  started = false;
+  finished = false;
+  input.value = "";
+  if(newPassage) text = randomText();
+  else if(mode === "words") text = makeWordText(totalWords);
+  $("timer").textContent = mode === "time" ? duration : totalWords;
+  $("result").style.display = "none";
+  renderText();
+  updateStats();
+  input.focus();
+}
+
+function makeWordText(count){
+  const pool = passages.join(" ").replace(/[.,]/g,"").split(" ");
+  const words = [];
+  for(let i=0;i<count;i++) words.push(pool[Math.floor(Math.random()*pool.length)]);
+  return words.join(" ");
+}
+
+input.addEventListener("input",()=>{
+  if(finished) return;
+  if(!started && input.value.length) start();
+  renderText();
+  updateStats();
+  if(mode === "words" && input.value.length >= text.length) finish();
+  if(input.value.length >= text.length) finish();
+});
+
+$("typingBox").addEventListener("click",()=>input.focus());
+$("restart").onclick=()=>reset();
+$("newText").onclick=()=>reset(true);
+
+document.querySelectorAll("[data-mode]").forEach(btn=>{
+  btn.onclick=()=>{
+    mode=btn.dataset.mode;
+    document.querySelectorAll("[data-mode]").forEach(b=>b.classList.toggle("active",b===btn));
+    document.querySelectorAll("#options button").forEach(b=>b.classList.toggle("active",Number(b.dataset.value)===(mode==="time"?duration:totalWords)));
+    reset();
+  };
+});
+
+function updateOptions(){
+  $("options").innerHTML=(mode==="time"?[15,30,60,120]:[10,25,50,100]).map(v=>
+    `<button class="control-btn ${v===(mode==="time"?duration:totalWords)?"active":""}" data-value="${v}">${mode==="time"?v+"s":v}</button>`
+  ).join("");
+  $("options").querySelectorAll("button").forEach(btn=>{
+    btn.onclick=()=>{
+      if(mode==="time") duration=Number(btn.dataset.value);
+      else totalWords=Number(btn.dataset.value);
+      updateOptions();
+      reset();
+    };
+  });
+}
+document.querySelectorAll("[data-mode]").forEach(btn=>{
+  btn.addEventListener("click",updateOptions);
+});
+
+$("themeBtn").onclick=()=>{
+  document.body.classList.toggle("light");
+  localStorage.setItem("typo-theme",document.body.classList.contains("light")?"light":"dark");
+};
+if(localStorage.getItem("typo-theme")==="light") document.body.classList.add("light");
+
+$("testNav").onclick=()=>{
+  $("typingBox").scrollIntoView({behavior:"smooth"});
+  input.focus();
+};
+$("resultNav").onclick=()=>{
+  if($("result").style.display==="block") $("result").scrollIntoView({behavior:"smooth"});
+};
+
+document.addEventListener("keydown",e=>{
+  if(e.key==="Tab"){
+    e.preventDefault();
+    if(e.shiftKey) return;
+    if(document.activeElement===input){
+      reset();
+    }else{
+      input.focus();
+    }
+  }
+  if(e.key==="Enter" && e.shiftKey){
+    e.preventDefault();
+    reset(true);
+  }
+});
+
+updateOptions();
+reset();
+</script>
+</body>
+</html>
